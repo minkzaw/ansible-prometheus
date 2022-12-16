@@ -1,0 +1,50 @@
+---
+- name: Install node exporter in the target hosts.
+  hosts: all
+  vars_files:
+    - vars/packages.yml
+    - vars/service_file.yml
+  tasks:
+    - name: Create directory for node exporter packages
+      ansible.builtin.file:
+        path: "{{ node_exporter_dest }}"
+        state: directory
+
+    - name: Download and extract node_exporter file.
+      ansible.builtin.unarchive:
+        src: "{{ node_exporter_package }}"
+        dest: "{{ node_exporter_dest }}"
+        extra_opts: [--strip-components=1]
+        remote_src: True
+
+    - name: Exists node_exporter user in the target hosts.
+      ansible.builtin.user:
+        name: node_exporter
+        shell: "{{ user_default_shell }}"
+        create_home: False
+
+    - name: Copy node_exporter excutable to the /usr/local/bin
+      ansible.builtin.copy:
+        src: "{{ node_exporter_dest }}/node_exporter"
+        dest: /usr/local/bin/node_exporter
+        owner: node_exporter
+        group: node_exporter
+        mode: 0744
+        remote_src: True
+        
+    - name: Copy systemd service file
+      ansible.builtin.copy:
+        src: "{{ node_exporter_service_file }}"
+        dest: /etc/systemd/system/node_exporter.service
+
+    - name: Service the node_exporter service.
+      ansible.builtin.systemd:
+        daemon_reload: True
+        name: node_exporter.service
+        state: started
+        enabled: True
+
+    - name: Allow node_exporter port in firewalld if installed.
+      ansible.builtin.firewalld:
+        name: 
+...

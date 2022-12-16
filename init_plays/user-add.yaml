@@ -1,0 +1,23 @@
+---
+- name: Setup for the managed hosts.
+  hosts: all
+  vars_files:
+    - vars/new_user.yaml
+  tasks:
+    - name: Add the {{ ansible_user }} for the managed hosts with root privilege.
+      ansible.builtin.user:
+        name: "{{ new_user }}"
+        shell: /usr/bin/bash
+        state: present
+    
+    - name: Add users to the sudoer with "NOPASSWD".
+      ansible.builtin.copy:
+        content: "{{ new_user }} ALL=(ALL) NOPASSWD:ALL"
+        dest: "/etc/sudoers.d/{{ new_user }}"
+        
+    - name: Copy the authorized_key to newly created {{ ansible_user }} user.
+      ansible.posix.authorized_key:
+        user: "{{ new_user }}"
+        state: present
+        key: "{{ lookup('file', './files/ansible.pub') }}"
+...
