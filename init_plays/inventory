@@ -1,12 +1,2 @@
-<<<<<<< HEAD
 [targets]
 debian11.lab.lan
-=======
-[webserver]
-<<<<<<< HEAD
-rocky9.lab.lan	ansible_host=192.168.10.11
->>>>>>> 697f6b5553780b7bfab45517a59603c0166118d0
-=======
-rocky.lab.lan
-rhel.lab.lan
->>>>>>> 3e24a5e8dda25c4e37712071e8e00cc45ca996ca

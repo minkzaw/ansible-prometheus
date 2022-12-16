@@ -43,8 +43,4 @@
         name: node_exporter.service
         state: started
         enabled: True
-
-    - name: Allow node_exporter port in firewalld if installed.
-      ansible.builtin.firewalld:
-        name: 
 ...
